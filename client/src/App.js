@@ -1,13 +1,14 @@
 // src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ListaPessoas from './components/admin/ListaClientes';
+import Formulario from './components/cliente/Formulario';
+import DetalhePessoa from './components/cliente/PainelCliente';
+import EditarPessoa from './components/admin/EditarCliente';
 
 // Assumindo que os arquivos dos componentes estão em src/components/
 // e exportam default ou o nome correspondente.
-import Formulario from './components/formulario';
-import ListaPessoas from './components/listaadmin';
-import DetalhePessoa from './components/painelCliente';
-import EditarPessoa from './components/editarPessoa';
+
 
 function App() {
   return (
