@@ -1,6 +1,6 @@
 // src/components/Formulario.js
 import React, { useState } from 'react';
-import { adicionarPessoa } from '../services/api'; // Importa do serviço
+import { adicionarPessoa } from '../../services/api'; // Importa do serviço
 
 function Formulario() {
     const [form, setForm] = useState({ nome: '', idade: '', email: '' });

@@ -1,7 +1,7 @@
 // src/components/EditarPessoa.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { buscarPessoaPorId, atualizarPessoa } from '../services/api'; // Importa do serviço
+import { buscarPessoaPorId, atualizarPessoa } from '../../services/api'; // Importa do serviço
 
 function EditarPessoa() {
     const { id } = useParams();

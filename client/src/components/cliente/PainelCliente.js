@@ -1,7 +1,7 @@
 // src/components/DetalhePessoa.js
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { buscarPessoaPorId, excluirPessoa } from '../services/api'; // Importa do serviço
+import { buscarPessoaPorId, excluirPessoa } from '../../services/api'; // Importa do serviço
 
 function DetalhePessoa() {
     const { id } = useParams();

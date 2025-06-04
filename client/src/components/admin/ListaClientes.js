@@ -1,7 +1,7 @@
 // src/components/ListaPessoas.js
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { listarPessoas } from '../services/api'; // Importa do serviço
+import { listarPessoas } from '../../services/api'; // Importa do serviço
 
 function ListaPessoas() {
     const [pessoas, setPessoas] = useState([]);
