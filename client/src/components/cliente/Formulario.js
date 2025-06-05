@@ -22,52 +22,61 @@ function Formulario() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    // 1. Criar uma consulta para verificar telefone ou placa já existentes
-    const q = query(
-      collection(db, 'clientes'),
-      where('telefone', '==', cliente.telefone)
-    );
+    // Formatando os dados
+    const nome = cliente.nome.trim();
+    const telefone = cliente.telefone.replace(/\D/g, '');
+    const carro = cliente.carro.trim();
+    const placa = cliente.placa.trim().toUpperCase();
+    const servico = cliente.servico.trim();
 
-    const q2 = query(
-      collection(db, 'clientes'),
-      where('placa', '==', cliente.placa)
-    );
+    try {
+      // Verificando se já existe telefone ou placa cadastrada
+      const qTelefone = query(collection(db, 'clientes'), where('telefone', '==', telefone));
+      const qPlaca = query(collection(db, 'clientes'), where('placa', '==', placa));
 
-    const [telefoneSnap, placaSnap] = await Promise.all([
-      getDocs(q),
-      getDocs(q2)
-    ]);
+      const [telefoneSnap, placaSnap] = await Promise.all([
+        getDocs(qTelefone),
+        getDocs(qPlaca)
+      ]);
 
-    if (!telefoneSnap.empty) {
-      alert('Já existe um cliente com este telefone.');
-      return;
+      if (!telefoneSnap.empty) {
+        alert('Já existe um cliente com este telefone.');
+        return;
+      }
+
+      if (!placaSnap.empty) {
+        alert('Já existe um cliente com esta placa.');
+        return;
+      }
+
+      // Obtendo a maior senha existente
+      const snapshot = await getDocs(collection(db, 'clientes'));
+      const senhas = snapshot.docs
+        .map(doc => doc.data().senha)
+        .filter(s => typeof s === 'number');
+
+      const novaSenha = senhas.length > 0 ? Math.max(...senhas) + 1 : 1000;
+
+      // Salvando o cliente
+      await addDoc(collection(db, 'clientes'), {
+        nome,
+        telefone,
+        carro,
+        placa,
+        servico,
+        status: 'Aguardando',
+        senha: novaSenha
+      });
+
+      alert(`Cadastro realizado com sucesso! Sua senha é: ${novaSenha}`);
+      navigate('/');
+    } catch (error) {
+      console.error('Erro ao cadastrar cliente:', error);
+      alert('Erro ao cadastrar. Tente novamente.');
     }
-
-    if (!placaSnap.empty) {
-      alert('Já existe um cliente com esta placa.');
-      return;
-    }
-
-    // 2. Gerar senha automaticamente
-    const senha = Math.floor(1000 + Math.random() * 9000); // ex: 4 dígitos
-
-    // 3. Salvar no Firebase
-    await addDoc(collection(db, 'clientes'), {
-      ...cliente,
-      status: 'Aguardando',
-      senha,
-    });
-
-    alert('Cadastro realizado com sucesso!');
-    navigate('/');
-  } catch (error) {
-    console.error('Erro ao cadastrar cliente:', error);
-    alert('Erro ao cadastrar. Tente novamente.');
-  }
-};
+  };
 
   return (
     <div className="form-container">
@@ -139,6 +148,7 @@ function Formulario() {
           src={require('../images/rodape.png')}
           alt="Logo Somocar"
           className="footer-logo"
+          onError={(e) => { e.target.style.display = 'none'; }}
         />
       </div>
     </div>
