@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-
+require('dotenv').config();
 
 const clientesRoutes = require('./routes/clientesRoutes');
 
@@ -17,5 +17,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`✅ Servidor rodando na porta ${PORT}`);
 });

@@ -1,60 +1,92 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../../firebase');  // importa o firebase.js
 
-let clientes = [
-  { id: 1, nome: 'João', email: 'joao@email.com' },
-  { id: 2, nome: 'Maria', email: 'maria@email.com' }
-];
-
-router.get('/', (req, res) => {
-  res.json(clientes);
+// LISTAR todos os clientes 
+router.get('/', async (req, res) => {
+    try {
+        const snapshot = await db.ref('clientes').once('value');
+        const data = snapshot.val() || {};
+        const clientes = Object.entries(data).map(([id, cliente]) => ({ id, ...cliente }));
+        res.json(clientes);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar clientes' });
+    }
 });
 
-router.get('/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const cliente = clientes.find(c => c.id === id);
-  if (!cliente) return res.status(404).json({ error: 'Cliente não encontrado' });
-  res.json(cliente);
+// CRIAR novo cliente
+router.post('/', async (req, res) => {
+    const { nome, carro, placa, tipoServico, telefone } = req.body;
+
+    if (!nome || !carro || !placa || !tipoServico || !telefone) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+    }
+
+    const novoCliente = { nome, carro, placa, tipoServico, telefone, status: "Aguardando" };
+
+    try {
+        const ref = db.ref('clientes').push();
+        await ref.set(novoCliente);
+        res.status(201).json({ id: ref.key, ...novoCliente });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao criar cliente' });
+    }
 });
 
-router.post('/', (req, res) => {
-  const { nome, email } = req.body;
-  if (!nome || !email) {
-    return res.status(400).json({ error: 'Nome e email são obrigatórios' });
-  }
-  const id = clientes.length > 0 ? clientes[clientes.length - 1].id + 1 : 1;
-  const novoCliente = { id, nome, email };
-  clientes.push(novoCliente);
-  res.status(201).json(novoCliente);
+// BUSCAR cliente por ID
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const snapshot = await db.ref(`clientes/${id}`).once('value');
+        if (!snapshot.exists()) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+        res.json({ id, ...snapshot.val() });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar cliente' });
+    }
 });
 
-router.put('/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const { nome, email } = req.body;
+// ATUALIZAR status do cliente
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
 
-  const clienteIndex = clientes.findIndex(c => c.id === id);
-  if (clienteIndex === -1) {
-    return res.status(404).json({ error: 'Cliente não encontrado' });
-  }
+    if (!status) {
+        return res.status(400).json({ error: 'Status é obrigatório para atualização' });
+    }
 
-  if (!nome && !email) {
-    return res.status(400).json({ error: 'Informe pelo menos nome ou email para atualizar' });
-  }
+    try {
+        const clienteRef = db.ref(`clientes/${id}`);
+        const snapshot = await clienteRef.once('value');
 
-  if (nome) clientes[clienteIndex].nome = nome;
-  if (email) clientes[clienteIndex].email = email;
+        if (!snapshot.exists()) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
 
-  res.json(clientes[clienteIndex]);
+        await clienteRef.update({ status });
+        res.json({ id, ...snapshot.val(), status });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao atualizar cliente' });
+    }
 });
 
-router.delete('/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const clienteIndex = clientes.findIndex(c => c.id === id);
-  if (clienteIndex === -1) {
-    return res.status(404).json({ error: 'Cliente não encontrado' });
-  }
-  clientes.splice(clienteIndex, 1);
-  res.status(204).send();
+// DELETAR cliente
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const clienteRef = db.ref(`clientes/${id}`);
+        const snapshot = await clienteRef.once('value');
+
+        if (!snapshot.exists()) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        await clienteRef.remove();
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao deletar cliente' });
+    }
 });
 
 module.exports = router;
