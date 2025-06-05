@@ -1,0 +1,122 @@
+/* src/components/cliente/Formulario.css */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7fa;
+}
+
+.form-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  background-color: #ffffff;
+}
+
+/* HEADER ESTILOSO */
+.form-header {
+  width: 100%;
+  background: linear-gradient(145deg, #003399, #0055cc);
+  padding: 2.5rem 1rem;
+  border-bottom-left-radius: 60px;
+  border-bottom-right-radius: 60px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.form-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.4;
+  font-weight: bold;
+}
+
+.form {
+  margin-top: 2rem;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+
+.icon-input {
+  display: flex;
+  align-items: center;
+}
+
+.icon-input input {
+  padding-left: 2.5rem;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  margin-left: 0.8rem;
+  color: #555;
+  font-size: 1.1rem;
+}
+
+input {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  font-size: 1rem;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.form-button {
+  width: 100%;
+  padding: 0.9rem;
+  background-color: #0047ab;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.form-button:hover {
+  background-color: #003080;
+}
+
+.footer {
+  margin-top: 2rem;
+  text-align: center;
+  padding-bottom: 1.5rem;
+}
+
+.footer-logo {
+  height: 90px;
+  max-width: 80%;
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .form-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .form {
+    padding: 1.5rem;
+  }
+
+  .footer-logo {
+    height: 100px;
+  }
+}
