@@ -1,10 +1,9 @@
 // src/components/cliente/Formulario.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
 import './Formulario.css';
 import { FaUser, FaCar, FaWrench, FaPhone, FaIdCard } from 'react-icons/fa';
+import axios from 'axios';
 
 function Formulario() {
   const [cliente, setCliente] = useState({
@@ -31,50 +30,16 @@ function Formulario() {
     const placa = cliente.placa.trim().toUpperCase();
     const servico = cliente.servico.trim();
 
+    const dadosFormatados = { nome, telefone, carro, placa, servico };
+
     try {
-      // Verificando se já existe telefone ou placa cadastrada
-      const qTelefone = query(collection(db, 'clientes'), where('telefone', '==', telefone));
-      const qPlaca = query(collection(db, 'clientes'), where('placa', '==', placa));
+      const response = await axios.post('http://localhost:3000/clientes',dadosFormatados);
 
-      const [telefoneSnap, placaSnap] = await Promise.all([
-        getDocs(qTelefone),
-        getDocs(qPlaca)
-      ]);
-
-      if (!telefoneSnap.empty) {
-        alert('Já existe um cliente com este telefone.');
-        return;
-      }
-
-      if (!placaSnap.empty) {
-        alert('Já existe um cliente com esta placa.');
-        return;
-      }
-
-      // Obtendo a maior senha existente
-      const snapshot = await getDocs(collection(db, 'clientes'));
-      const senhas = snapshot.docs
-        .map(doc => doc.data().senha)
-        .filter(s => typeof s === 'number');
-
-      const novaSenha = senhas.length > 0 ? Math.max(...senhas) + 1 : 1000;
-
-      // Salvando o cliente
-      await addDoc(collection(db, 'clientes'), {
-        nome,
-        telefone,
-        carro,
-        placa,
-        servico,
-        status: 'Aguardando',
-        senha: novaSenha
-      });
-
-      alert(`Cadastro realizado com sucesso! Sua senha é: ${novaSenha}`);
-      navigate('/');
+      alert(`Cadastro realizado com sucesso! Sua senha é: ${response.data.senha}`);
+      navigate('/status');
     } catch (error) {
       console.error('Erro ao cadastrar cliente:', error);
-      alert('Erro ao cadastrar. Tente novamente.');
+      alert(error.response?.data?.message || 'Erro ao cadastrar. Tente novamente.');
     }
   };
 
