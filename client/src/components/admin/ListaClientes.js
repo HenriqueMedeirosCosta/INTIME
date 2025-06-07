@@ -1,69 +1,60 @@
-// src/components/ListaClientes.js
+// src/components/ListaPessoas.js
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { listarClientes } from '../../services/api'; // Importa a nova função de API
-import { useAuth } from '../contexts/AuthContext';    // Para pegar o usuário e o token
+import { listarPessoas } from '../../services/api'; // Importa do serviço
 
-function ListaClientes() {
-    const [clientes, setClientes] = useState([]);
+function ListaPessoas() {
+    const [pessoas, setPessoas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { currentUser } = useAuth(); // Pega o usuário do contexto de autenticação
 
     useEffect(() => {
-        async function carregarClientes() {
-            if (!currentUser) {
-                setError("Acesso restrito. Por favor, faça o login.");
-                setLoading(false);
-                return;
-            }
-
+        async function carregarPessoas() {
             try {
                 setLoading(true);
                 setError(null);
-
-                // Pega o ID Token do usuário logado para provar sua identidade ao backend
-                const idToken = await currentUser.getIdToken();
-
-                // Chama nossa função de API, passando o token para autorização
-                const data = await listarClientes(idToken);
-
-                setClientes(data);
+                const data = await listarPessoas();
+                setPessoas(data);
             } catch (err) {
-                // O erro pode ser de rede ou a mensagem de 'Acesso negado' do nosso backend
-                setError(err.message || 'Ocorreu um erro ao carregar os dados.');
+                setError(err.message || 'Erro ao carregar pessoas.');
             } finally {
                 setLoading(false);
             }
         }
+        carregarPessoas();
+    }, []);
 
-        carregarClientes();
-    }, [currentUser]); // Recarrega a lista se o usuário logado mudar
-
-    // --- Renderização do Componente (igual ao exemplo anterior) ---
     if (loading) {
-        return <div className="container mt-4"><p>Carregando clientes...</p></div>;
+        return <div className="container mt-4"><p>Carregando pessoas...</p></div>;
     }
 
     if (error) {
-        return <div className="container mt-4 alert alert-danger">{error}</div>;
+        return <div className="container mt-4 alert alert-danger" role="alert">Erro: {error}</div>;
     }
 
     return (
         <div className="container mt-4">
-            <h2>Painel de Clientes (Admin via API)</h2>
-            {/* ... resto da lógica de renderização ... */}
-            {clientes.length > 0 ? (
+            <h2>Lista de Pessoas</h2>
+            {pessoas.length === 0 ? (
+                <p className="mt-3">Nenhuma pessoa cadastrada ainda.</p>
+            ) : (
                 <ul className="list-group mt-3">
-                    {clientes.map(cliente => (
-                        <Link key={cliente.id} to={`/cliente/${cliente.id}`} className="list-group-item list-group-item-action">
-                            {cliente.nome} - Placa: {cliente.placa}
+                    {pessoas.map(pessoa => (
+                        <Link
+                            key={pessoa.id}
+                            to={`/pessoa/${pessoa.id}`}
+                            className="list-group-item list-group-item-action"
+                        >
+                            {pessoa.nome}
                         </Link>
                     ))}
                 </ul>
-            ) : <p>Nenhum cliente cadastrado.</p>}
+            )}
+            <Link to="/cadastro" className="btn btn-success mt-4">
+                + Cadastrar Nova Pessoa
+            </Link>
         </div>
     );
 }
 
-export default ListaClientes;
+export default ListaPessoas;

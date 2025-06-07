@@ -6,7 +6,6 @@ import Formulario from './components/cliente/Formulario';
 import StatusCliente from './components/cliente/StatusCliente'; // <- novo nome
 import EditarPessoa from './components/admin/EditarCliente';
 import Home from './components/cliente/Home';
-import ListaClientes from './components/admin/ListaClientes';
 
 function App() {
   return (
@@ -17,7 +16,7 @@ function App() {
           <Route path="/cadastro" element={<Formulario />} />
           <Route path="/status" element={<StatusCliente />} />          
           <Route path="/status/:id" element={<StatusCliente />} />      
-          <Route path="/Fila" element={<ListaClientes />} />
+          <Route path="/editar/:id" element={<EditarPessoa />} />
         </Routes>
       </div>
     </Router>
