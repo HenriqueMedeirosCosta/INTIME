@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
 
     let existeTelefone = false;
     let existePlaca = false;
-    let maiorSenha = 999;
+    let maiorSenha = 0;
 
     clientesSnapshot.forEach(doc => {
       const data = doc.data();

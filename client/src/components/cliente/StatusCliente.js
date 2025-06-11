@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
-import './StatusCliente.css'; // ou o nome correto do CSS
+import './StatusCliente.css';
 import logo from '../images/rodape.png';
 import { FaWhatsapp } from 'react-icons/fa';
 
