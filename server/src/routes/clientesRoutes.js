@@ -9,7 +9,6 @@ router.post('/', async (req, res) => {
   const { nome, telefone, carro, placa, servico } = req.body;
 
   try {
-    // Obter todos os documentos da coleção "clientes"
     const clientesSnapshot = await getDocs(collection(db, 'clientes'));
 
     let existeTelefone = false;
@@ -61,5 +60,27 @@ router.post('/', async (req, res) => {
     });
   }
 });
+
+router.get('/:senha', async (req, res) => {
+  const senha = req.params.senha;
+  console.log('[GET /clientes/:senha] Senha recebida:', senha);
+
+  try {
+    const doc = await db.collection('clientes').doc(senha).get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ erro: 'Cliente não encontrado' });
+    }
+
+    const dadosCliente = doc.data();
+    console.log('[Firestore] Cliente encontrado:', dadosCliente);
+    res.json(dadosCliente);
+
+  } catch (erro) {
+    console.error('[Erro Firestore]', erro);
+    res.status(500).json({ erro: 'Erro ao buscar cliente' });
+  }
+});
+
 
 module.exports = router;
