@@ -12,8 +12,7 @@ function App() {
       <div className="app-container">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/cadastro" element={<Formulario />} />
-          <Route path="/status" element={<StatusCliente />} />          
+          <Route path="/cadastro" element={<Formulario />} />    
           <Route path="/status/:senha" element={<StatusCliente />} />      
           <Route path="/editar/:senha" element={<EditarPessoa />} />
         </Routes>

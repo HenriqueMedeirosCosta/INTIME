@@ -36,7 +36,7 @@ function Formulario() {
       const response = await axios.post('http://localhost:3000/clientes',dadosFormatados);
 
       alert(`Cadastro realizado com sucesso! Sua senha é: ${response.data.senha}`);
-      navigate('/status');
+      navigate(`/status/${response.data.senha}`);
     } catch (error) {
       console.error('Erro ao cadastrar cliente:', error);
       alert(error.response?.data?.message || 'Erro ao cadastrar. Tente novamente.');

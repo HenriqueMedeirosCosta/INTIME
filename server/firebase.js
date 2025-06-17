@@ -1,11 +1,12 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('./firebase-key.json');  // Ajuste o nome se necessário
+const serviceAccount = require('./firebase-key.json');  
+
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://in-time-9eed9-default-rtdb.firebaseio.com'  // Confirme esse URL no console do Firebase!
+  databaseURL: 'https://in-time-9eed9-default-rtdb.firebaseio.com'  
 });
 
-const db = admin.database();
+const db = admin.firestore();
 
 module.exports = db;

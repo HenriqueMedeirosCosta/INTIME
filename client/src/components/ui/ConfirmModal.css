@@ -1,0 +1,62 @@
+/* ConfirmModal.css */
+
+.my-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;         /* Cobrir toda a tela */
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo preto semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;         /* Muito acima para ficar sobre tudo */
+}
+
+.my-modal-content {
+  background-color: #fff !important;  /* Fundo branco sólido, com !important para garantir */
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  max-width: 350px;
+  width: 90%;
+  text-align: center;
+  color: #000;            /* Texto preto */
+  user-select: none;
+}
+
+.my-modal-botoes {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+}
+
+.my-btn-sim,
+.my-btn-nao {
+  padding: 10px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.my-btn-sim {
+  background-color: #d9534f;
+  color: #fff;
+}
+
+.my-btn-sim:hover {
+  background-color: #c9302c;
+}
+
+.my-btn-nao {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.my-btn-nao:hover {
+  background-color: #5a6268;
+}
