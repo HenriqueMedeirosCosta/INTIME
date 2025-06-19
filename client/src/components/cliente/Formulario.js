@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import './Formulario.css';
 import { FaUser, FaCar, FaWrench, FaPhone, FaIdCard } from 'react-icons/fa';
 import axios from 'axios';
+import Telinha from '../ui/telinha';
 
-function Formulario() {
+const Formulario = () => {
+  const [mostrar, setMostrar] = useState(false);
+  const [senha, setSenha] = useState('');
   const [cliente, setCliente] = useState({
     nome: '',
     telefone: '',
@@ -33,11 +36,14 @@ function Formulario() {
     const dadosFormatados = { nome, telefone, carro, placa, servico };
 
     try {
-      const response = await axios.post('http://localhost:3000/clientes',dadosFormatados);
+      console.log('[DEBUG] Dados sendo enviados:', dadosFormatados);
+      const response = await axios.post('http://localhost:3000/clientes', dadosFormatados);
 
-      alert(`Cadastro realizado com sucesso! Sua senha é: ${response.data.senha}`);
-      navigate(`/status/${response.data.senha}`);
+      setSenha(response.data.senha);
+      setMostrar(true);
     } catch (error) {
+      console.error('Erro completo:', error);
+      console.error('Resposta da API:', error.response?.data);
       console.error('Erro ao cadastrar cliente:', error);
       alert(error.response?.data?.message || 'Erro ao cadastrar. Tente novamente.');
     }
@@ -107,6 +113,14 @@ function Formulario() {
 
         <button type="submit" className="form-button">Concluir</button>
       </form>
+
+      {mostrar && (
+        <Telinha
+          titulo="Cadastro realizado com sucesso!"
+          mensagem={`Sua senha é: ${senha}`}
+          aoConfirmar={() => navigate(`/status/${senha}`)}
+        />
+      )}
 
       <div className="footer">
         <img
