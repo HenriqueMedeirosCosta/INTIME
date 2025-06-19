@@ -24,7 +24,7 @@ function AdminLogin() {
                     <h1>OLÁ<br />GERENTE</h1>
                 </div>
                 <form className="login-form" onSubmit={handleLogin}>
-                    <input type="text" placeholder="matrícula" required />
+                    <input type="text" placeholder="usuário" required />
                     <input type="password" placeholder="senha" required />
                     <button type="submit" className="login-button">LOGIN</button>
                 </form>
