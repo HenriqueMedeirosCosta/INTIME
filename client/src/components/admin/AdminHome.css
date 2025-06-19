@@ -1,0 +1,36 @@
+/* client/src/components/admin/AdminHome.css */
+
+.admin-home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #fff;
+  padding: 20px; /* Adiciona um respiro nas laterais em telas muito pequenas */
+  box-sizing: border-box;
+}
+
+.admin-home-logo {
+  /*Tamanho padrão para telas maiores (desktop) */
+  max-width: 300px;
+  
+  /* Garante que a imagem se ajuste bem dentro do seu espaço */
+  width: 100%; 
+  height: auto; /* Mantém a proporção da imagem */
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+/* --- Estilos para Telas Pequenas (Responsividade para Celular) --- */
+@media (max-width: 600px) {
+  .admin-home-logo {
+    /* Em celulares, a logo ocupará 80% da largura da tela,
+       garantindo que não fique grande ou pequena demais. */
+    max-width: 80%;
+  }
+}

@@ -1,0 +1,62 @@
+/* client/src/components/admin/pages/DashboardWelcome.css  */
+
+.dashboard-welcome {
+  max-width: 1200px;
+}
+
+.welcome-header h2 {
+  font-size: 2rem;
+  color: #1c3d5a;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-header p {
+  font-size: 1rem;
+  color: #5a7184;
+}
+
+.stats-container {
+  display: flex;
+  gap: 1.5rem; /* Espaçamento entre os cards */
+  margin-top: 2rem;
+  flex-wrap: wrap; /* Permite que os cards quebrem a linha se não couberem */
+}
+
+.stat-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  flex-grow: 1; /* Faz com que os cards cresçam para ocupar o espaço */
+  min-width: 220px; /* Largura mínima para cada card */
+  text-align: center;
+  border-left: 5px solid #3e92cc; /* Detalhe colorido */
+}
+
+.stat-card h3 {
+  font-size: 2.5rem;
+  color: #003080;
+  margin: 0 0 0.5rem 0;
+}
+
+.stat-card p {
+  font-size: 1rem;
+  color: #5a7184;
+  margin: 0;
+}
+
+/*  Media query para os cards em telas menores */
+@media (max-width: 768px) {
+  .welcome-header h2 {
+    font-size: 1.5rem; /* Título um pouco menor */
+  }
+
+  .stats-container {
+    flex-direction: column; /* Empilha os cards verticalmente */
+    gap: 1rem; /* Reduz o espaço entre eles */
+  }
+
+  .stat-card {
+    width: 100%; /* Faz o card ocupar toda a largura disponível */
+  }
+}

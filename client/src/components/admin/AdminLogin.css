@@ -1,0 +1,75 @@
+/* client/src/components/admin/AdminLogin.css */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f7fb;
+}
+.login-container {
+    background-color: white;
+    padding: 0;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    overflow: hidden;
+}
+.login-header {
+    background-color: #0d47a1;
+    color: white;
+    padding: 40px 30px;
+    border-bottom-left-radius: 60px;
+}
+.login-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    line-height: 1.1;
+}
+.login-form {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.input-group {
+    position: relative;
+}
+.input-group .icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+.login-button {
+    padding: 15px;
+    border-radius: 30px;
+    border: none;
+    background-color: #1976d2;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.login-button:hover {
+    background-color: #0d47a1;
+}
+.login-footer {
+    padding: 20px;
+    text-align: center;
+}
+.login-footer img {
+    max-width: 150px;
+}

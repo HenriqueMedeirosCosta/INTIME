@@ -1,0 +1,162 @@
+/* client/src/components/admin/AdminLayout.css (VERSÃO RESPONSIVA) */
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7fa; /* Movido para cá */
+}
+
+.sidebar-container {
+  width: 250px;
+  background-color: #003080;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  /* [NOVO] Transição suave para a sidebar */
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000; /* [NOVO] Garante que a sidebar fique na frente */
+}
+
+.logo-header {
+  padding: 1.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #030f24;
+}
+
+.sidebar-logo {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.sidebar-nav {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+}
+
+.menu-title {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #7a94b8;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.menu-list li a {
+  display: block;
+  padding: 0.9rem 1.5rem;
+  color: #d0d9e6;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+  border-left: 4px solid transparent;
+}
+
+.menu-list li a:hover {
+  background-color: #0040a8; /* Cor um pouco mais clara no hover */
+  color: #ffffff;
+}
+
+.menu-list li a.active {
+  background-color: #002561; /* Cor de fundo para o item ativo */
+  color: #ffffff;
+  font-weight: 600;
+  border-left-color: #3e92cc;
+}
+
+/* [NOVO] Wrapper para o conteúdo principal e header mobile */
+.main-content-wrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 2rem;
+  background-color: #f4f7fa;
+}
+
+/* [NOVO] Estilos para o header e botão que só aparecem em mobile */
+.mobile-header {
+  display: none; /* Escondido por padrão (desktop) */
+  padding: 0.75rem 1rem;
+  background-color: #003080;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  color: white;
+}
+
+.menu-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+/* [NOVO] Estilo para o overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+
+/* =============================================== */
+/* [NOVO] MEDIA QUERY PARA DISPOSITIVOS MÓVEIS      */
+/* Estilos aplicados em telas com até 768px de largura */
+/* =============================================== */
+
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar-container {
+    position: fixed; /* Fixa na tela */
+    left: 0;
+    top: 0;
+    height: 100%;
+    transform: translateX(-100%); /* Esconde a sidebar fora da tela */
+  }
+
+  /* Se a sidebar tiver a classe .open, ela aparece */
+  .sidebar-container.open {
+    transform: translateX(0);
+  }
+  
+  /* Mostra o overlay quando a sidebar está aberta */
+  .sidebar-container.open + .main-content-wrapper .sidebar-overlay,
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .main-content {
+    padding: 1rem; /* Diminui o padding em telas menores */
+  }
+
+  /* Mostra o cabeçalho e o botão do menu em mobile */
+  .mobile-header {
+    display: flex;
+    align-items: center;
+  }
+}
