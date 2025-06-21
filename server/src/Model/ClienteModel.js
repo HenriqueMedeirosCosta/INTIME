@@ -1,88 +1,83 @@
-// server/src/Model/ClienteModel.js (VERSÃO FINAL COM SENHA SEQUENCIAL)
+const db = require('../../firebase');
 
-const { db } = require('../../firebase');
+async function criarCliente(dadosCliente) {
+  const { nome, telefone, carro, placa, servico } = dadosCliente;
 
-/**
- * Gera a próxima senha sequencial para o dia atual usando uma transação segura.
- * Cria uma coleção 'contadores' para armazenar o último número de cada dia.
- * @returns {Promise<number>} A próxima senha disponível.
- */
-async function gerarProximaSenha() {
-  // Pega a data de hoje no formato YYYY-MM-DD (ex: 2025-06-20)
-  const hoje = new Date().toISOString().split('T')[0];
-  
-  // Cria uma referência para o documento do contador de hoje
-  const contadorRef = db.collection('contadores').doc(hoje);
+  const clientesSnapshot = await db.collection('clientes').get();
 
-  try {
-    // Executa uma transação para garantir a atomicidade (operação segura)
-    const novaSenha = await db.runTransaction(async (transaction) => {
-      const contadorDoc = await transaction.get(contadorRef);
+  let existeTelefone = false;
+  let existePlaca = false;
+  let maiorSenha = 0;
 
-      if (!contadorDoc.exists) {
-        // Se for o primeiro atendimento do dia, a senha é 1.
-        transaction.set(contadorRef, { ultimaSenha: 1 });
-        return 1;
-      } else {
-        // Se já existem atendimentos, incrementa a última senha.
-        const ultimaSenha = contadorDoc.data().ultimaSenha;
-        const proximaSenha = ultimaSenha + 1;
-        transaction.update(contadorRef, { ultimaSenha: proximaSenha });
-        return proximaSenha;
-      }
-    });
+  clientesSnapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.telefone === telefone) existeTelefone = true;
+    if (data.placa === placa) existePlaca = true;
+    if (typeof data.senha === 'number' && data.senha > maiorSenha) {
+      maiorSenha = data.senha;
+    }
+  });
 
-    return novaSenha;
-
-  } catch (error) {
-    console.error("Erro ao gerar senha sequencial:", error);
-    // Em caso de falha na transação, gera uma senha aleatória como fallback.
-    return Math.floor(1000 + Math.random() * 9000);
+  if (existeTelefone) {
+    throw new Error('Telefone já cadastrado');
   }
+
+  if (existePlaca) {
+    throw new Error('Placa já cadastrada');
+  }
+
+  const novaSenha = maiorSenha + 1;
+
+  const novoCliente = {
+    nome,
+    telefone,
+    carro,
+    placa,
+    servico,
+    status: 'Aguardando',
+    senha: novaSenha,
+    dataCadastro: new Date()
+  };
+
+  await db.collection('clientes').add(novoCliente);
+
+  return {
+    message: 'Cliente cadastrado com sucesso!',
+    senha: novaSenha
+  };
 }
 
-const Cliente = {
-  criarCliente: async (dadosCliente) => {
-    // 1. Gera a próxima senha disponível
-    const novaSenha = await gerarProximaSenha();
+async function buscarDocumentoPorSenha(senha) {
+  const senhaNum = parseInt(senha);
+  const snapshot = await db.collection('clientes')
+    .where('senha', '==', senhaNum)
+    .limit(1)
+    .get();
 
-    // 2. Prepara o documento completo para ser salvo no Firestore
-    const novoCliente = {
-      ...dadosCliente,
-      senha: novaSenha,
-      status: 'Aguardando', // Define o status inicial
-      timestamp: new Date()    // Adiciona a data/hora do cadastro para ordenação
-    };
-    
-    // 3. Adiciona o novo cliente à coleção 'clientes'
-    const docRef = await db.collection('clientes').add(novoCliente);
+  return snapshot.empty ? null : snapshot.docs[0];
+}
 
-    // 4. [CORREÇÃO] Retorna um objeto com o ID e a SENHA para o frontend
-    return {
-      id: docRef.id,
-      senha: novaSenha
-    };
-  },
+async function buscarDadosPorSenha(senha) {
+  const doc = await buscarDocumentoPorSenha(senha);
+  return doc ? { id: doc.id, ...doc.data() } : null;
+}
 
-  // Suas outras funções continuam aqui...
-  buscarDadosPorSenha: async (senha) => {
-    const clientesRef = db.collection('clientes');
-    const snapshot = await clientesRef.where('senha', '==', senha).limit(1).get();
-    if (snapshot.empty) return null;
-    const doc = snapshot.docs[0];
-    return { id: doc.id, ...doc.data() };
-  },
+async function atualizarStatus(id, novoStatus) {
+    const docRef = await buscarDocumentoPorSenha(id)
+    console.log("docRef: " , docRef);
 
-  atualizarStatus: async (id, status) => {
-    const clienteRef = db.collection('clientes').doc(id);
-    await clienteRef.update({ status: status });
+    if(!docRef.exists) return false;
+
+    await docRef.ref.update({status: novoStatus });
     return true;
-  },
+}
+
+module.exports = {
+  criarCliente,
+  buscarDadosPorSenha,
+  buscarDocumentoPorSenha,
+  atualizarStatus
 };
 
-<<<<<<< HEAD
 
 //onSnapshot(collection(db, "clientes"), callback) usar esse metodo para buscar a coleção em tempo real
-=======
-module.exports = Cliente;
->>>>>>> 8f5512c8651f339037cf21e912916047a84e97da
