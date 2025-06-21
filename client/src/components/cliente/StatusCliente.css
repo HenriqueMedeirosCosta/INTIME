@@ -1,82 +1,108 @@
-.painel-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 20px;
-  min-height: 100vh;
-  background-color: #ffffff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* client/src/components/cliente/StatusCliente.css */
+
+.status-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.painel-logo {
-  width: 198px;
-  margin-bottom: 30px;
+.logo-somocar-status {
+    max-width: 250px;
+    margin-bottom: 2rem;
 }
 
-.info-box {
-  background: #f1f1f1;
-  border-radius: 16px;
-  padding: 20px 30px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  width: 100%;
-  max-width: 400px;
+.status-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 500px;
+    overflow: hidden;
+    text-align: left;
 }
 
-.info-box p {
-  margin: 10px 0;
-  font-size: 16px;
+.status-header {
+    background-color: #0d47a1;
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
 }
 
-.senha-box {
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px 40px;
-  font-weight: bold;
-  font-size: 22px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 25px;
-  text-align: center;
-  color: #333;
+.status-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
 }
 
-.btn-cancelar {
-  background-color: #d00000;
-  color: white;
-  border: none;
-  padding: 14px 24px;
-  font-size: 16px;
-  border-radius: 30px;
-  cursor: pointer;
-  margin-bottom: 15px;
-  transition: 0.2s;
-  width: 100%;
-  max-width: 400px;
+.status-body {
+    padding: 2rem;
 }
 
-.btn-cancelar:hover {
-  background-color: #b00000;
+.status-body p {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0 0 1rem 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
 }
 
-.btn-whatsapp {
-  background-color: white;
-  border: 2px solid #25d366;
-  color: #25d366;
-  padding: 12px 24px;
-  font-size: 16px;
-  border-radius: 30px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 400px;
-  gap: 8px;
-  transition: 0.2s;
+.status-body p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
 }
 
-.btn-whatsapp:hover {
-  background-color: #25d366;
-  color: white;
+.senha-destaque {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #d32f2f; /* Vermelho para destaque */
+    padding: 0.25rem 0.5rem;
+    background-color: #ffebee;
+    border-radius: 5px;
+}
+
+.status-tag {
+    font-weight: bold;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    color: white;
+}
+
+.status-aguardando { background-color: #ff9800; } /* Laranja */
+.status-em_atendimento { background-color: #007bff; } /* Azul */
+.status-concluido { background-color: #28a745; } /* Verde */
+.status-cancelado { background-color: #6c757d; } /* Cinza */
+
+
+.status-footer {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.whatsapp-button {
+    background-color: #25D366;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.whatsapp-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.error-message {
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 1.2rem;
 }

@@ -1,8 +1,9 @@
-// client/src/components/admin/pages/DashboardWelcome.js (COPIE E COLE ESTE CÓDIGO)
+// client/src/components/admin/pages/DashboardWelcome.js (VERSÃO CORRIGIDA)
 
 import React, { useState, useEffect } from 'react';
 import './DashboardWelcome.css';
-import { db } from '../../../firebase'; 
+
+import { db } from '../../../firebase';
 import { collection, query, where, getCountFromServer } from 'firebase/firestore';
 
 function DashboardWelcome() {
@@ -24,7 +25,10 @@ function DashboardWelcome() {
             try {
                 const atendimentosRef = collection(db, 'clientes');
 
-                const qAguardando = query(atendimentosRef, where('status', '==', 'Aguardando atendimento'));
+                // [CORREÇÃO] Usando o status "Aguardando" que você definiu.
+                const qAguardando = query(atendimentosRef, where('status', '==', 'Aguardando'));
+                
+                // Esta consulta agora busca por "Em Execução", que é o status que vamos implementar.
                 const qEmExecucao = query(atendimentosRef, where('status', '==', 'Em Execução'));
 
                 const [snapshotAguardando, snapshotEmExecucao] = await Promise.all([
