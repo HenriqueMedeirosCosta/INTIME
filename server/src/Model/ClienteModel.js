@@ -78,3 +78,6 @@ module.exports = {
   buscarDocumentoPorSenha,
   atualizarStatus
 };
+
+
+//onSnapshot(collection(db, "clientes"), callback) usar esse metodo para buscar a coleção em tempo real

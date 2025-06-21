@@ -38,8 +38,9 @@ const Formulario = () => {
     try {
       console.log('[DEBUG] Dados sendo enviados:', dadosFormatados);
       const response = await axios.post('http://localhost:3000/clientes', dadosFormatados);
-
-      setSenha(response.data.senha);
+      
+      const senhaGerada = response.data.senha;
+      setSenha(senhaGerada);
       setMostrar(true);
     } catch (error) {
       console.error('Erro completo:', error);
@@ -118,7 +119,11 @@ const Formulario = () => {
         <Telinha
           titulo="Cadastro realizado com sucesso!"
           mensagem={`Sua senha é: ${senha}`}
-          aoConfirmar={() => navigate(`/status/${senha}`)}
+          aoConfirmar={() => {
+            
+            navigate(`/status/${senha}`);
+          }
+          }
         />
       )}
 

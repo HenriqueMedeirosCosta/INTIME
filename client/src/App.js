@@ -26,7 +26,7 @@ function App() {
         {/* === ROTAS DO CLIENTE === */}
         <Route path="/" element={<Home />} />
         <Route path="/cadastro" element={<Formulario />} />
-        <Route path="/status/:id" element={<StatusCliente />} />
+        <Route path="/status/:senha" element={<StatusCliente />} />
 
 
         {/* === FLUXO DE ACESSO DO GERENTE === */}

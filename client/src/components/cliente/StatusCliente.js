@@ -8,6 +8,7 @@ import axios from 'axios';
 
 function StatusCliente() {
   const { senha } = useParams();
+  
   const [usuario, setUsuario] = useState(null);
   const [mensagem, setMensagem] = useState('');
   const [loading, setLoading] = useState(true);
@@ -33,7 +34,6 @@ function StatusCliente() {
     }
   }, [senha]);
 
-  // Mostrar carregamento ou erro
   if (loading) return <p>Carregando...</p>;
   if (!usuario) return <p>{mensagem || 'Dados não encontrados.'}</p>;
 
