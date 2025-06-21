@@ -73,3 +73,13 @@
 .login-footer img {
     max-width: 150px;
 }
+.error-message {
+  color: #D8000C;
+  background-color: #FFBABA;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: -10px; /* Ajuste para ficar mais próximo do formulário */
+  margin-bottom: 10px;
+}

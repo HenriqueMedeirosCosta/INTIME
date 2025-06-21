@@ -1,14 +1,13 @@
-// src/components/cliente/Formulario.js
+// client/src/components/cliente/Formulario.js (COM PROTEÇÃO CONTRA DUPLO CLIQUE)
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Formulario.css';
 import { FaUser, FaCar, FaWrench, FaPhone, FaIdCard } from 'react-icons/fa';
 import axios from 'axios';
-import Telinha from '../ui/telinha';
+// (Assumindo que você tem um modal de sucesso/erro para exibir o resultado)
 
-const Formulario = () => {
-  const [mostrar, setMostrar] = useState(false);
-  const [senha, setSenha] = useState('');
+function Formulario() {
   const [cliente, setCliente] = useState({
     nome: '',
     telefone: '',
@@ -17,6 +16,9 @@ const Formulario = () => {
     servico: ''
   });
 
+  // [NOVO] Estado para controlar o envio do formulário
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -26,26 +28,35 @@ const Formulario = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Formatando os dados
-    const nome = cliente.nome.trim();
-    const telefone = cliente.telefone.replace(/\D/g, '');
-    const carro = cliente.carro.trim();
-    const placa = cliente.placa.trim().toUpperCase();
-    const servico = cliente.servico.trim();
+    // Se já estiver enviando, não faz nada
+    if (isSubmitting) return;
 
-    const dadosFormatados = { nome, telefone, carro, placa, servico };
+    // [MUDANÇA] Inicia o processo de envio e desabilita o botão
+    setIsSubmitting(true);
+
+    const dadosFormatados = {
+      nome: cliente.nome.trim(),
+      telefone: cliente.telefone.replace(/\D/g, ''),
+      carro: cliente.carro.trim(),
+      placa: cliente.placa.trim().toUpperCase(),
+      servico: cliente.servico.trim()
+    };
 
     try {
-      console.log('[DEBUG] Dados sendo enviados:', dadosFormatados);
-      const response = await axios.post('http://localhost:3000/clientes', dadosFormatados);
+      const response = await axios.post('http://localhost:3001/clientes', dadosFormatados);
+      
+      // Exibe a mensagem de sucesso com a senha
+      alert(`Cadastro realizado com sucesso! Sua senha é: ${response.data.senha}`);
 
-      setSenha(response.data.senha);
-      setMostrar(true);
+      // Redireciona para a página de status
+      navigate(`/status/${response.data.id}`);
+
     } catch (error) {
-      console.error('Erro completo:', error);
-      console.error('Resposta da API:', error.response?.data);
       console.error('Erro ao cadastrar cliente:', error);
-      alert(error.response?.data?.message || 'Erro ao cadastrar. Tente novamente.');
+      alert(error.response?.data?.erro || 'Erro ao cadastrar. Tente novamente.');
+    } finally {
+      // [MUDANÇA] Ao final de tudo (sucesso ou erro), reabilita o botão
+      setIsSubmitting(false);
     }
   };
 
@@ -56,80 +67,35 @@ const Formulario = () => {
       </div>
 
       <form className="form" onSubmit={handleSubmit}>
+        {/* ... Seus inputs continuam os mesmos ... */}
         <div className="form-group icon-input">
           <FaUser className="input-icon" />
-          <input
-            name="nome"
-            value={cliente.nome}
-            onChange={handleChange}
-            placeholder="Nome completo"
-            required
-          />
+          <input name="nome" value={cliente.nome} onChange={handleChange} placeholder="Nome completo" required disabled={isSubmitting} />
         </div>
-
         <div className="form-group icon-input">
           <FaPhone className="input-icon" />
-          <input
-            name="telefone"
-            value={cliente.telefone}
-            onChange={handleChange}
-            placeholder="Telefone"
-            required
-          />
+          <input name="telefone" value={cliente.telefone} onChange={handleChange} placeholder="Telefone" required disabled={isSubmitting} />
         </div>
-
         <div className="form-group icon-input">
           <FaCar className="input-icon" />
-          <input
-            name="carro"
-            value={cliente.carro}
-            onChange={handleChange}
-            placeholder="Carro"
-            required
-          />
+          <input name="carro" value={cliente.carro} onChange={handleChange} placeholder="Carro" required disabled={isSubmitting} />
         </div>
-
         <div className="form-group icon-input">
           <FaIdCard className="input-icon" />
-          <input
-            name="placa"
-            value={cliente.placa}
-            onChange={handleChange}
-            placeholder="Placa do veículo"
-            required
-          />
+          <input name="placa" value={cliente.placa} onChange={handleChange} placeholder="Placa do veículo" required disabled={isSubmitting} />
         </div>
-
         <div className="form-group icon-input">
           <FaWrench className="input-icon" />
-          <input
-            name="servico"
-            value={cliente.servico}
-            onChange={handleChange}
-            placeholder="Serviço desejado"
-            required
-          />
+          <input name="servico" value={cliente.servico} onChange={handleChange} placeholder="Serviço desejado" required disabled={isSubmitting} />
         </div>
-
-        <button type="submit" className="form-button">Concluir</button>
+        
+        {/* [MUDANÇA] O botão agora é desabilitado e muda o texto durante o envio */}
+        <button type="submit" className="form-button" disabled={isSubmitting}>
+          {isSubmitting ? 'Cadastrando...' : 'Concluir'}
+        </button>
       </form>
 
-      {mostrar && (
-        <Telinha
-          titulo="Cadastro realizado com sucesso!"
-          mensagem={`Sua senha é: ${senha}`}
-          aoConfirmar={() => navigate(`/status/${senha}`)}
-        />
-      )}
-
-      <div className="footer">
-        <img
-          src={require('../images/rodape.png')}
-          alt="Logo Somocar"
-          className="footer-logo"
-          onError={(e) => { e.target.style.display = 'none'; }}
-        />
-      </div>
+      {/* ... Seu rodapé com a logo ... */}
     </div>
   );
 }

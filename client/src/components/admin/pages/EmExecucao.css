@@ -1,145 +1,37 @@
-.em-execucao-page {
-padding: 1rem;
-}
+/* client/src/components/admin/FilaAtendimento.css */
 
-.page-header {
-margin-bottom: 2rem;
-border-bottom: 1px solid #e0e0e0;
-padding-bottom: 1rem;
+.page-container { animation: fadeInPage 0.5s ease-in-out; }
+.page-header h2 { font-size: 1.8rem; color: #333; margin-bottom: 0.5rem; }
+.page-header p { color: #666; margin-top: 0; margin-bottom: 2rem; }
+.card-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
-
-.page-header h1 {
-font-size: 1.8rem;
-color: #1c3d5a;
-margin: 0;
+.atendimento-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
-
-.page-header p {
-font-size: 1rem;
-color: #5a7184;
-margin-top: 0.25rem;
+.atendimento-card .card-header {
+    background-color: #f8f9fa;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid #eee;
+    font-size: 1rem;
 }
-
-.loading-message,
-.no-services-message {
-text-align: center;
-font-size: 1.2rem;
-color: #5a7184;
-padding: 3rem;
+.atendimento-card .card-body { padding: 1.25rem; flex-grow: 1; }
+.atendimento-card .card-body p { margin: 0 0 0.5rem 0; }
+.atendimento-card .card-footer { padding: 1.25rem; background-color: #f8f9fa; text-align: right; }
+.btn-atender {
+    background-color: #007bff;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s;
 }
-
-.servicos-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-gap: 1.5rem;
-}
-
-.servico-card {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-  border-left: 5px solid #ffa500;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  /* ADICIONADO: padding interno para afastar o conteúdo das bordas externas */
-  padding: 0.5rem;
-}
-
-.servico-card:hover {
-transform: translateY(-5px);
-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-padding: 1.25rem 1.5rem; /* AUMENTADO O PADDING */
-border-bottom: 1px solid #f0f0f0;
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-
-.card-header h3 {
-margin: 0;
-color: #003080;
-font-size: 1.2rem;
-}
-
-.placa {
-background-color: #eef2f7;
-color: #333;
-padding: 0.25rem 0.6rem;
-border-radius: 4px;
-font-weight: bold;
-font-family: 'Courier New', Courier, monospace;
-}
-
-.card-body {
-padding: 1.5rem; /* AUMENTADO O PADDING */
-flex-grow: 1;
-}
-
-.card-body p {
-margin: 0 0 1rem 0; /* AUMENTADA A MARGEM INFERIOR */
-color: #333;
-}
-
-.card-body p strong {
-color: #5a7184;
-}
-
-.servicos-list strong {
-display: block;
-margin-bottom: 0.75rem; /* AUMENTADA A MARGEM INFERIOR */
-color: #5a7184;
-}
-
-.servicos-list ul {
-list-style: none;
-padding-left: 0;
-margin: 0;
-}
-
-.servicos-list li {
-background-color: #f4f7fa;
-padding: 0.6rem; /* AUMENTADO O PADDING /
-border-radius: 4px;
-margin-bottom: 0.6rem; / AUMENTADA A MARGEM INFERIOR */
-}
-
-.card-actions {
-padding: 1.25rem 1.5rem; /* AUMENTADO O PADDING */
-background-color: #f9fafb;
-border-top: 1px solid #f0f0f0;
-display: flex;
-gap: 1rem;
-border-bottom-left-radius: 8px;
-border-bottom-right-radius: 8px;
-}
-
-.card-actions button {
-flex-grow: 1;
-padding: 0.8rem; /* AUMENTADO O PADDING */
-border-radius: 6px;
-border: none;
-font-weight: bold;
-cursor: pointer;
-transition: background-color 0.2s;
-}
-
-.btn-details {
-background-color: #e0e7ff;
-color: #3730a3;
-}
-.btn-details:hover {
-background-color: #c7d2fe;
-}
-
-.btn-concluir {
-background-color: #dcfce7;
-color: #166534;
-}
-.btn-concluir:hover {
-background-color: #bbf7d0;
-}
+.btn-atender:hover { background-color: #0056b3; }

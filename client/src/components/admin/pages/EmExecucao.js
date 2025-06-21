@@ -1,148 +1,97 @@
 // client/src/components/admin/pages/EmExecucao.js
 
 import React, { useState, useEffect } from 'react';
-import './EmExecucao.css'; // [NOVO] Importaremos o CSS específico para esta página
+import './EmExecucao.css'; // Usaremos um CSS próprio para esta tela
 
-// [PARA O FUTURO] Imports do Firebase
-// import { db } from '../../../firebase';
-// import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-
-// --- DADOS SIMULADOS (remover quando usar o Firebase) ---
-const dadosSimulados = [
-  {
-    id: 'xyz123',
-    cliente: 'Mariana Costa',
-    veiculo: 'Toyota Corolla',
-    placa: 'ABC1D23',
-    mecanico: 'Carlos Alberto',
-    servicos: ['Troca de óleo e filtro', 'Revisão dos freios'],
-    inicio: new Date(2025, 5, 19, 9, 15), // Ano, Mês (0-11), Dia, Hora, Minuto
-    status: 'Em Execução'
-  },
-  {
-    id: 'abc789',
-    cliente: 'Fernando Lima',
-    veiculo: 'Honda Civic',
-    placa: 'XYZ4E56',
-    mecanico: 'Ana Júlia',
-    servicos: ['Alinhamento e Balanceamento', 'Troca de pneu'],
-    inicio: new Date(2025, 5, 19, 10, 30),
-    status: 'Em Execução'
-  },
-  {
-    id: 'def456',
-    cliente: 'Ricardo Souza',
-    veiculo: 'Ford Ka',
-    placa: 'QWE7F89',
-    mecanico: 'Carlos Alberto',
-    servicos: ['Diagnóstico do motor'],
-    inicio: new Date(2025, 5, 19, 11, 0),
-    status: 'Em Execução'
-  }
-];
-// --- FIM DOS DADOS SIMULADOS ---
-
+import { db } from '../../../firebase';
+import { collection, query, where, getDocs, orderBy, doc, updateDoc } from 'firebase/firestore';
 
 function EmExecucao() {
-  const [servicos, setServicos] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [emExecucao, setEmExecucao] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchServicos = async () => {
-      setLoading(true);
-
-      // =================================================================
-      // PARTE 1: SIMULAÇÃO DE DADOS (USAR DURANTE O DESENVOLVIMENTO)
-      // =================================================================
-      setTimeout(() => {
-        setServicos(dadosSimulados);
-        setLoading(false);
-      }, 1000); // Simula 1 segundo de carregamento
-
-
-      // =================================================================
-      // PARTE 2: CÓDIGO REAL DO FIREBASE (DESCOMENTAR PARA USAR)
-      // =================================================================
-      /*
-      try {
-        // Assume que sua coleção se chama 'atendimentos' ou similar
-        const atendimentosRef = collection(db, 'atendimentos');
-        
-        // Cria a consulta: busca documentos onde status é 'Em Execução' e ordena pelo início
-        const q = query(
-          atendimentosRef, 
-          where('status', '==', 'Em Execução'),
-          orderBy('inicio', 'asc') // Mostra os mais antigos primeiro
-        );
-
-        const querySnapshot = await getDocs(q);
-        const listaServicos = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          // Converte o Timestamp do Firebase para um objeto Date do JS
-          inicio: doc.data().inicio.toDate() 
-        }));
-        
-        setServicos(listaServicos);
-
-      } catch (error) {
-        console.error("Erro ao buscar serviços em execução:", error);
-        // Tratar o erro, talvez mostrando uma mensagem na tela
-      } finally {
-        setLoading(false);
-      }
-      */
+    const fetchEmExecucao = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const atendimentosRef = collection(db, 'clientes');
+            // [MUDANÇA] A consulta agora busca por status 'Em Atendimento'
+            const q = query(
+                atendimentosRef,
+                where('status', '==', 'Em Atendimento'),
+                orderBy('timestamp', 'desc') // Mostra os mais recentes primeiro
+            );
+            const querySnapshot = await getDocs(q);
+            const atendimentosEmExecucao = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setEmExecucao(atendimentosEmExecucao);
+        } catch (err) {
+            console.error("Erro ao buscar serviços em execução:", err);
+            setError('Não foi possível carregar os serviços.');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    fetchServicos();
-  }, []);
+    useEffect(() => {
+        fetchEmExecucao();
+    }, []);
 
-  if (loading) {
-    return <div className="loading-message">Carregando serviços...</div>;
-  }
+    // Função para finalizar um atendimento
+    const handleFinalizarAtendimento = async (atendimentoId) => {
+        try {
+            const atendimentoDocRef = doc(db, 'clientes', atendimentoId);
+            // Atualiza o status para 'Concluido', usando o seu padrão
+            await updateDoc(atendimentoDocRef, {
+                status: 'concluido' 
+            });
+            // Remove o card da tela para feedback imediato
+            setEmExecucao(prevAtendimentos => prevAtendimentos.filter(item => item.id !== atendimentoId));
+            alert('Atendimento finalizado com sucesso!');
+        } catch (err) {
+            console.error("Erro ao finalizar atendimento:", err);
+            alert("Não foi possível finalizar o atendimento.");
+        }
+    };
 
-  return (
-    <div className="em-execucao-page">
-      <header className="page-header">
-        <h1>Serviços em Execução</h1>
-        <p>Acompanhe os veículos que estão atualmente na oficina.</p>
-      </header>
+    if (loading) return <p>Carregando serviços em execução...</p>;
+    if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
-      {servicos.length === 0 ? (
-        <div className="no-services-message">
-          Nenhum serviço em execução no momento.
-        </div>
-      ) : (
-        <div className="servicos-grid">
-          {servicos.map(servico => (
-            <div key={servico.id} className="servico-card">
-              <div className="card-header">
-                <h3>{servico.veiculo}</h3>
-                <span className="placa">{servico.placa}</span>
-              </div>
-              <div className="card-body">
-                <p><strong>Cliente:</strong> {servico.cliente}</p>
-                <p><strong>Mecânico:</strong> {servico.mecanico}</p>
-                <p><strong>Início:</strong> {servico.inicio.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
-                <div className="servicos-list">
-                  <strong>Serviços:</strong>
-                  <ul>
-                    {servico.servicos.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              <div className="card-actions">
-                <button className="btn-details">Ver Detalhes</button>
-                <button className="btn-concluir">Concluir Serviço</button>
-              </div>
+    return (
+        <div className="page-container">
+            <header className="page-header">
+                <h2>Serviços em Execução</h2>
+                <p>Serviços que estão sendo realizados no momento.</p>
+            </header>
+            
+            <div className="card-list">
+                {emExecucao.length > 0 ? (
+                    emExecucao.map(atendimento => (
+                        <div key={atendimento.id} className="atendimento-card">
+                            <div className="card-header">
+                                <strong>Senha: {atendimento.senha || 'N/A'}</strong>
+                            </div>
+                            <div className="card-body">
+                                <p><strong>Veículo:</strong> {atendimento.carro}</p>
+                                <p><strong>Serviço:</strong> {atendimento.servico}</p>
+                            </div>
+                            <div className="card-footer">
+                                {/* O botão agora finaliza o atendimento */}
+                                <button onClick={() => handleFinalizarAtendimento(atendimento.id)} className="btn-finalizar">
+                                    Finalizar Atendimento
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p>Nenhum serviço em execução no momento.</p>
+                )}
             </div>
-          ))}
         </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default EmExecucao;

@@ -3,15 +3,19 @@ const cors = require('cors');
 require('dotenv').config();
 
 const clientesRoutes = require('./routes/clientesRoutes');
-//const db = require('../firebase'); // se for usar o db aqui
+// [NOVO] Importando as rotas do gerente
+const gerentesRoutes = require('./routes/gerentesRoutes'); 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Sua porta deve ser diferente da do React. Se o React usa 3000, o servidor pode usar 3001.
+const PORT = process.env.PORT || 3001; 
 
 app.use(cors());
 app.use(express.json());
 
 app.use('/clientes', clientesRoutes);
+// [NOVO] Registrando as rotas do gerente no caminho /gerentes
+app.use('/gerentes', gerentesRoutes); 
 
 app.get('/', (req, res) => {
   res.send('API InTime funcionando!');

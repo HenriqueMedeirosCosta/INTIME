@@ -36,10 +36,12 @@ function App() {
 
         {/* === DASHBOARD DO GERENTE === */}
         <Route path="/admin/dashboard" element={<AdminLayout />}>
-          <Route index element={<DashboardWelcome />} />
-          <Route path="fila" element={<FilaAtendimento />} />
-          <Route path="em-execucao" element={<EmExecucao />} />
-          <Route path="fila/editar/:id" element={<EditarCliente />} />
+        <Route index element={<DashboardWelcome />} />
+        <Route path="fila" element={<FilaAtendimento />} />
+        <Route path="fila/editar/:id" element={<EditarCliente />} />
+          
+        {/* === A rota agora carrega nosso novo componente === */}
+        <Route path="em-execucao" element={<EmExecucao />} />
         </Route>
       </Routes>
     </Router>
