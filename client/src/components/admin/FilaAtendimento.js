@@ -1,12 +1,7 @@
-// client/src/components/admin/FilaAtendimento.js (CONECTADO COM DADOS SIMULADOS)
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './FilaAtendimento.css'; // Usaremos um CSS para os cards
-
-// Para o futuro, quando conectarmos ao Firebase
-// import { db } from '../../../firebase';
-// import { collection, query, where, getDocs } from 'firebase/firestore';
+import './FilaAtendimento.css';
+import { listarClientes } from '../../services/api';
 
 function FilaAtendimento() {
   const [fila, setFila] = useState([]);
@@ -15,43 +10,22 @@ function FilaAtendimento() {
   useEffect(() => {
     const carregarFila = async () => {
       setLoading(true);
-
-      // =================================================================
-      // --- CÓDIGO DE SIMULAÇÃO  ---
-      // =================================================================
-      const dadosDaFila = [
-        { id: '1', senha: '101', carro: 'VW Fox', servico: 'Troca de Óleo' },
-        { id: '2', senha: '102', carro: 'Honda Civic', servico: 'Alinhamento e Balanceamento' },
-        { id: '3', senha: '103', carro: 'Fiat Uno', servico: 'Revisão Completa' },
-      ];
-
-      setTimeout(() => {
-        setFila(dadosDaFila);
-        setLoading(false);
-      }, 500);
-
-      // =================================================================
-      // --- CÓDIGO REAL DO FIREBASE (PARA O FUTURO) ---
-      // =================================================================
-      /*
       try {
-        const atendimentosRef = collection(db, 'clientes');
-        const q = query(atendimentosRef, where('status', '==', 'Aguardando atendimento'));
-        const querySnapshot = await getDocs(q);
-        const atendimentosDaFila = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setFila(atendimentosDaFila);
+        const response = await listarClientes();
+        const clientesAguardando = response.data.filter(cliente => cliente.status === 'Aguardando');
+        setFila(clientesAguardando);
+        
       } catch (error) {
-        console.error("Erro ao buscar fila do Firebase:", error);
+        console.error('Erro ao buscar fila da API:', error);
       } finally {
         setLoading(false);
       }
-      */
     };
 
     carregarFila();
+
+    const intervalo = setInterval(carregarFila, 60000); // Atualiza a cada 1 minuto
+    return () => clearInterval(intervalo);
   }, []);
 
   if (loading) {
@@ -77,7 +51,8 @@ function FilaAtendimento() {
                 <p><strong>Serviço:</strong> {atendimento.servico}</p>
               </div>
               <div className="card-footer">
-                <Link to={`/admin/dashboard/fila/editar/${atendimento.id}`} className="btn-atender">
+                <Link to={`/admin/dashboard/fila/editar/${atendimento.senha}`} className="btn-atender">
+                  
                   Iniciar Atendimento
                 </Link>
               </div>

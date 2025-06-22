@@ -1,69 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { getFirestore, collection, getDocs, query, where, doc, updateDoc } = require('firebase/firestore');
-const { firebaseApp } = require('../../firebase');
+const controller = require('../Controller/ControllerGerente');
+const ControllerCliente = require('../Controller/ControllerCliente');
+const auth = require('../Controller/AuthAdminController');
+const verificarToken = require('../Middleware/verificarToken'); 
+// Rota pública para login
+router.post('/login', auth.login);
 
-const db = getFirestore(firebaseApp);
-
-// Login do gerente
-router.post('/login', async (req, res) => {
-  const { matricula, senha } = req.body;
-
-  try {
-    const snapshot = await getDocs(
-      query(collection(db, 'gerentes'), where('matricula', '==', matricula), where('senha', '==', senha))
-    );
-
-    if (snapshot.empty) {
-      return res.status(401).json({ message: 'Matrícula ou senha inválida' });
-    }
-
-    return res.json({ message: 'Login realizado com sucesso' });
-  } catch (error) {
-    return res.status(500).json({ message: 'Erro no login', details: error.message });
-  }
-});
-
-// Ver veículos na fila (status Aguardando)
-router.get('/fila', async (req, res) => {
-  try {
-    const snapshot = await getDocs(
-      query(collection(db, 'clientes'), where('status', '==', 'Aguardando'))
-    );
-
-    const fila = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    return res.json(fila);
-  } catch (error) {
-    return res.status(500).json({ message: 'Erro ao buscar fila', details: error.message });
-  }
-});
-
-// Selecionar veículo para atendimento
-router.patch('/:id/atender', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    await updateDoc(doc(db, 'clientes', id), { status: 'Em atendimento' });
-    return res.json({ message: 'Veículo em atendimento' });
-  } catch (error) {
-    return res.status(500).json({ message: 'Erro ao iniciar atendimento', details: error.message });
-  }
-});
-
-// Finalizar atendimento de veículo
-router.patch('/:id/finalizar', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    await updateDoc(doc(db, 'clientes', id), { status: 'Finalizado' });
-    return res.json({ message: 'Atendimento finalizado' });
-  } catch (error) {
-    return res.status(500).json({ message: 'Erro ao finalizar atendimento', details: error.message });
-  }
-});
+// Rotas protegidas
+router.use(verificarToken);  
+router.post('/fila', controller.iniciarFila);
+router.get('/resumo', controller.obterResumoFila);
+router.get('/clientes', controller.listarTodosClientes);
+router.get('/clientes/:id', ControllerCliente.buscarCliente);
+router.put('/clientes/:id', controller.atualizarCliente);
+router.put('/clientes/editar/:id', controller.finalizarAtendimento);
+router.delete('/clientes', controller.resetarBanco);
+router.get('/relatorio', controller.gerarRelatorioExcel);
 
 module.exports = router;

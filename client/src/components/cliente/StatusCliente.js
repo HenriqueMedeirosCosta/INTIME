@@ -5,6 +5,7 @@ import './StatusCliente.css';
 import logo from '../images/rodape.png';
 import { FaWhatsapp } from 'react-icons/fa';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 function StatusCliente() {
   const { senha } = useParams();
@@ -44,20 +45,30 @@ function StatusCliente() {
   };
 
   // Cancelar atendimento via API
-  const handleCancelarAtendimento = async () => {
-    try {
-      await axios.put(`http://localhost:3000/clientes/${usuario.senha}`, {
-        status: 'Cancelado',
-      });
-      alert('Atendimento cancelado!');
-      setMostrarModal(false);
-      navigate('/');
-    } catch (error) {
-      console.error('Erro ao cancelar atendimento:', error);
-      alert('Erro ao cancelar. Tente novamente.');
-      setMostrarModal(false);
-    }
-  };
+const handleCancelarAtendimento = async () => {
+  try {
+    await axios.put(`http://localhost:3000/clientes/${usuario.senha}`, {
+      status: 'Cancelado',
+    });
+    Swal.fire({
+      icon: 'success',
+      title: 'Atendimento cancelado!',
+      timer: 2000,
+      showConfirmButton: false,
+      timerProgressBar: true,
+    });
+    setMostrarModal(false);
+    navigate('/');
+  } catch (error) {
+    console.error('Erro ao cancelar atendimento:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao cancelar',
+      text: 'Tente novamente.',
+    });
+    setMostrarModal(false);
+  }
+};
 
   return (
     <div className="painel-container">

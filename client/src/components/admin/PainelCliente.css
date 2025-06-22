@@ -1,0 +1,89 @@
+/* Container principal */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Título */
+.container h3 {
+  font-size: 1.8rem;
+  color: #1f2937; /* cinza escuro */
+  margin-bottom: 20px;
+}
+
+/* Lista de detalhes */
+.list-group {
+  margin-top: 1rem;
+}
+
+.list-group-item {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #374151;
+  padding: 12px 16px;
+}
+
+/* Botões */
+.btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-warning {
+  background-color: #facc15;
+  color: #78350f;
+  border: none;
+}
+
+.btn-warning:hover {
+  background-color: #fbbf24;
+  color: #78350f;
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #d1d5db;
+  color: #111827;
+}
+
+/* Espaçamento entre botões */
+.mt-3 .btn + .btn {
+  margin-left: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+
+  .list-group-item {
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .mt-3 .btn + .btn {
+    margin-left: 0;
+  }
+}

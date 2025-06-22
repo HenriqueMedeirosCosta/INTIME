@@ -1,95 +1,103 @@
-// src/components/EditarPessoa.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { buscarPessoaPorId, atualizarPessoa } from '../../services/api'; // Importa do serviço
+import { buscarClientePorId, atualizarCliente } from '../../services/api';
 
-function EditarPessoa() {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [form, setForm] = useState({ nome: '', idade: '', email: '' });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(''); // Para erros de carregamento
-    const [submitMessage, setSubmitMessage] = useState({ texto: '', tipo: '' }); // Para erros/sucesso de submissão
+function EditarCliente() {
+  const { senha } = useParams();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        async function carregarPessoaParaEdicao() {
-            try {
-                setLoading(true);
-                setError('');
-                setSubmitMessage({ texto: '', tipo: '' });
-                const data = await buscarPessoaPorId(id);
-                if (data) {
-                    // Garante que idade seja string para o input type="number" se vier como número
-                    setForm({ nome: data.nome, idade: String(data.idade), email: data.email });
-                } else {
-                    setError('Pessoa não encontrada para edição.');
-                }
-            } catch (err) {
-                setError(err.message || 'Erro ao carregar dados para edição.');
-            } finally {
-                setLoading(false);
-            }
-        }
-        if (id) {
-            carregarPessoaParaEdicao();
-        }
-    }, [id]);
+  const [form, setForm] = useState({
+    nome: '',
+    telefone: '',
+    carro: '',
+    placa: '',
+    servico: '',
+    status: '',
+    horaInicio: '',
+  });
 
-    const handleChange = e => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [submitMessage, setSubmitMessage] = useState({ texto: '', tipo: '' });
 
-    const handleSubmit = async e => {
-        e.preventDefault();
-        setSubmitMessage({ texto: '', tipo: '' });
-
-        try {
-            // Converte idade para número antes de enviar
-            const dadosAtualizados = { ...form, idade: Number(form.idade) };
-            await atualizarPessoa(id, dadosAtualizados);
-            // Poderia exibir uma mensagem de sucesso aqui antes de navegar, ou apenas navegar
-            // setSubmitMessage({ texto: '✅ Pessoa atualizada com sucesso!', tipo: 'success' });
-            // setTimeout(() => navigate(`/pessoa/${id}`), 1500); // Atraso opcional para ver a mensagem
-            navigate(`/pessoa/${id}`); // Navega para a página de detalhes
-        } catch (err) {
-            setSubmitMessage({ texto: `❌ Erro ao atualizar: ${err.message}`, tipo: 'danger' });
-        }
-    };
-
-    if (loading) {
-        return <div className="container mt-4"><p>Carregando dados para edição...</p></div>;
+  useEffect(() => {
+    async function carregarCliente() {
+      try {
+        setLoading(true);
+        const cliente = await buscarClientePorId(senha);
+        setForm(cliente);
+      } catch (err) {
+        console.error('Erro ao carregar:', err);
+        setError('Erro ao carregar dados do cliente.');
+      } finally {
+        setLoading(false);
+      }
     }
 
-    if (error) {
-        return <div className="container mt-4 alert alert-danger" role="alert">{error}</div>;
+    carregarCliente();
+  }, [senha]);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleIniciarAtendimento = async (e) => {
+    e.preventDefault();
+    try {
+        const agora = new Date();
+    const horaFormatada = agora.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+      const dadosAtualizados = { ...form, status: 'Em atendimento',horaInicio: horaFormatada };
+        
+      await atualizarCliente(senha, dadosAtualizados);
+      navigate('/admin/dashboard/atendimento');
+    } catch (err) {
+      console.error('Erro ao atualizar cliente:', err);
+      setSubmitMessage({ texto: '❌ Erro ao iniciar atendimento.', tipo: 'danger' });
     }
+  };
 
-    return (
-        <div className="container mt-4">
-            <h3>Editar Pessoa (ID: {id})</h3>
-            <form onSubmit={handleSubmit} className="mt-3">
-                <div className="mb-3">
-                    <label htmlFor="nome" className="form-label">Nome</label>
-                    <input type="text" id="nome" name="nome" className="form-control" value={form.nome} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="idade" className="form-label">Idade</label>
-                    <input type="number" id="idade" name="idade" className="form-control" value={form.idade} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">E-mail</label>
-                    <input type="email" id="email" name="email" className="form-control" value={form.email} onChange={handleChange} required />
-                </div>
-                <button className="btn btn-warning" type="submit">Salvar Alterações</button>
-            </form>
+  if (loading) return <p className="container mt-4">Carregando cliente...</p>;
+  if (error) return <div className="container mt-4 alert alert-danger">{error}</div>;
 
-            {submitMessage.texto && (
-                <div className={`alert alert-${submitMessage.tipo === 'success' ? 'success' : 'danger'} mt-3`} role="alert">
-                    {submitMessage.texto}
-                </div>
-            )}
+  return (
+    <div className="container mt-4">
+      <h3>Editar Cliente (Senha: {senha})</h3>
+      <form onSubmit={handleIniciarAtendimento} className="mt-3">
+        <div className="mb-3">
+          <label htmlFor="nome" className="form-label">Nome</label>
+          <input type="text" id="nome" name="nome" className="form-control" value={form.nome} onChange={handleChange} required />
         </div>
-    );
+        <div className="mb-3">
+          <label htmlFor="telefone" className="form-label">Telefone</label>
+          <input type="text" id="telefone" name="telefone" className="form-control" value={form.telefone} onChange={handleChange} required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="carro" className="form-label">Carro</label>
+          <input type="text" id="carro" name="carro" className="form-control" value={form.carro} onChange={handleChange} required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="placa" className="form-label">Placa</label>
+          <input type="text" id="placa" name="placa" className="form-control" value={form.placa} onChange={handleChange} required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="servico" className="form-label">Serviço</label>
+          <input type="text" id="servico" name="servico" className="form-control" value={form.servico} onChange={handleChange} required />
+        </div>
+
+        <button type="submit" className="btn btn-success">Iniciar Atendimento</button>
+      </form>
+
+      {submitMessage.texto && (
+        <div className={`alert alert-${submitMessage.tipo} mt-3`} role="alert">
+          {submitMessage.texto}
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default EditarPessoa;
+export default EditarCliente;

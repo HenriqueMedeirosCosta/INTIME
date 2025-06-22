@@ -1,5 +1,26 @@
 const db = require('../../firebase');
 
+async function iniciarFila() {
+  const data = {
+    nome: "Início da Fila",
+    telefone: "000000000",
+    carro: "Padrão",
+    placa: "AAAAAAA",
+    servico: "Inicialização",
+    status: "Aguardando atendimento",
+    senha: 1000,
+    dataCadastro: new Date()
+  };
+
+  try {
+    await db.collection('clientes').add(data);
+    return true;
+  } catch (error) {
+    console.error("Erro ao iniciar a fila:", error);
+    return false;
+  }
+}
+// Criar um novo cliente
 async function criarCliente(dadosCliente) {
   const { nome, telefone, carro, placa, servico } = dadosCliente;
 
@@ -18,15 +39,16 @@ async function criarCliente(dadosCliente) {
     }
   });
 
-  if (existeTelefone) {
-    throw new Error('Telefone já cadastrado');
-  }
-
-  if (existePlaca) {
-    throw new Error('Placa já cadastrada');
-  }
+  if (existeTelefone) throw new Error('Telefone já cadastrado');
+  if (existePlaca) throw new Error('Placa já cadastrada');
 
   const novaSenha = maiorSenha + 1;
+      const agora = new Date();
+    const horaFormatada = agora.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
 
   const novoCliente = {
     nome,
@@ -36,7 +58,7 @@ async function criarCliente(dadosCliente) {
     servico,
     status: 'Aguardando',
     senha: novaSenha,
-    dataCadastro: new Date()
+    dataCadastro: horaFormatada
   };
 
   await db.collection('clientes').add(novoCliente);
@@ -47,6 +69,7 @@ async function criarCliente(dadosCliente) {
   };
 }
 
+// Buscar documento Firestore pelo número da senha
 async function buscarDocumentoPorSenha(senha) {
   const senhaNum = parseInt(senha);
   const snapshot = await db.collection('clientes')
@@ -57,27 +80,61 @@ async function buscarDocumentoPorSenha(senha) {
   return snapshot.empty ? null : snapshot.docs[0];
 }
 
+// Buscar apenas os dados do cliente
 async function buscarDadosPorSenha(senha) {
   const doc = await buscarDocumentoPorSenha(senha);
   return doc ? { id: doc.id, ...doc.data() } : null;
 }
 
-async function atualizarStatus(id, novoStatus) {
-    const docRef = await buscarDocumentoPorSenha(id)
-    console.log("docRef: " , docRef);
+// Atualizar status do cliente pela senha
+async function atualizarStatus(senha, novoStatus) {
+  const docRef = await buscarDocumentoPorSenha(senha);
+  if (!docRef) return false;
 
-    if(!docRef.exists) return false;
+  await docRef.ref.update({ status: novoStatus });
+  return true;
+}
 
-    await docRef.ref.update({status: novoStatus });
-    return true;
+// Listar todos os clientes
+async function listarTodos() {
+  const snapshot = await db.collection('clientes').get();
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+// Atualizar qualquer dado do cliente
+async function atualizarCliente(senha, novosDados) {
+  const doc = await buscarDocumentoPorSenha(senha);
+  if (!doc) return false;
+
+  await doc.ref.update(novosDados);
+  return true;
+}
+
+// Deletar todos os clientes
+async function deletarTodos() {
+  const snapshot = await db.collection('clientes').get();
+  const batch = db.batch();
+
+  snapshot.docs.forEach(doc => batch.delete(doc.ref));
+  await batch.commit();
+}
+
+// Escutar em tempo real (útil no admin)
+function escutarClientesTempoReal(callback) {
+  return db.collection('clientes').onSnapshot(snapshot => {
+    const dados = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(dados);
+  });
 }
 
 module.exports = {
+  iniciarFila,
   criarCliente,
-  buscarDadosPorSenha,
   buscarDocumentoPorSenha,
-  atualizarStatus
+  buscarDadosPorSenha,
+  atualizarStatus,
+  listarTodos,
+  atualizarCliente,
+  deletarTodos,
+  escutarClientesTempoReal
 };
-
-
-//onSnapshot(collection(db, "clientes"), callback) usar esse metodo para buscar a coleção em tempo real
